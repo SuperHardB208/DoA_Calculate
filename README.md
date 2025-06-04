@@ -4,7 +4,7 @@
 
 ### 项目简介
 
-**DoA_Calculate** 用于定量表征碳纳米管（SWNT）阵列的顺直性（Degree of Alignment，DoA）。本项目基于计算机视觉（CV）方法开发了一套程序，用于分析方向比例的提升。具体做法是将单根碳纳米管视为具有特定斜率的线段（图1e），其长度用霍夫空间中对应点被通过的次数表示。通过统计不同方向上的像素数量，实现对碳纳米管阵列取向分布的定量描述。
+**DoA_Calculate** 用于定量表征碳纳米管（SWNT）阵列的顺直性（Degree of Alignment，DoA）。本项目基于计算机视觉（CV）方法开发了一套程序，用于分析碳纳米管阵列取向。具体做法是将单根碳纳米管视为具有特定斜率的线段（图1e），其长度用霍夫空间中对应点被通过的次数表示。通过统计不同方向上的像素数量，实现对碳纳米管阵列取向分布的定量描述。
 
 ### 功能介绍
 
@@ -30,7 +30,7 @@
 
 ### Overview
 
-**DoA_Calculate** is designed to quantitatively characterize the degree of alignment (DoA) of single-walled carbon nanotube (SWNT) arrays. We developed a set of programs based on computer vision (CV) methods to analyze the improvement in orientation proportion. SWNTs are treated as line segments with specific slopes representing their linear morphology (Figure 1e). The length of each SWNT is quantified by how many times its corresponding point in the Hough space is passed through. The orientation distribution of the SWNT array is thus quantified by counting pixel abundance along directions.
+**DoA_Calculate** is designed to quantitatively characterize the degree of alignment (DoA) of single-walled carbon nanotube (SWNT) arrays. We developed a set of programs based on computer vision (CV) methods to analyze the  orientation distribution of SWNT arrays. SWNTs are treated as line segments with specific slopes representing their linear morphology (Figure 1e). The length of each SWNT is quantified by how many times its corresponding point in the Hough space is passed through. The orientation distribution of the SWNT array is thus quantified by counting pixel abundance along directions.
 
 ### Features
 

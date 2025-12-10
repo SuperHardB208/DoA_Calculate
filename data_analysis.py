@@ -2,78 +2,78 @@ import os
 import pandas as pd
 import numpy as np
 
-# 设定 txt 文件夹的路径和输出的 Excel 文件名
-txt_folder = 'F:\B208\Publish_A_Deep_Learning-Assisted_Comprehensive_Evaluation_Method_for_the_Morphology_of_SWNT_Arrays\Figure3'
-output_excel = 'F:/B208/Publish_A_Deep_Learning-Assisted_Comprehensive_Evaluation_Method_for_the_Morphology_of_SWNT_Arrays/Figure3/test.xlsx'
+# Set the path of the folder containing txt files and the output Excel filename
+txt_folder = ''
+output_excel = ''
 
-# 初始化一个空的字典，存储所有的数据
+# Initialize an empty dictionary to store all data
 data_dict = {}
 
-# 遍历文件夹中的所有 txt 文件
+# Iterate through all txt files in the folder
 for filename in os.listdir(txt_folder):
     if filename.endswith('.txt'):
         file_path = os.path.join(txt_folder, filename)
         
-        # 获取文件名的第一个单词作为 y 列名
+        # Use the first word of the filename as the y-column name
         y_column_name = filename.split()[0]
         
-        # 打开并读取文件内容
+        # Open and read the file
         with open(file_path, 'r') as f:
             for line in f:
                 try:
-                    # 用逗号分割每行数据，提取 x 和 y
+                    # Split by comma and extract x and y
                     x_value, y_value = line.strip().split(',', 1)
-                    x_value = float(x_value)  # 假设 x 是数字
-                    y_value = float(y_value)  # 假设 y 也是数字
+                    x_value = float(x_value)  # Assume x is numeric
+                    y_value = float(y_value)  # Assume y is numeric
                     
-                    # 将 x 值调整为循环角度
+                    # Adjust x value to circular angles
                     if x_value < 0:
-                        x_value += 180  # 将负角度调整为正角度
+                        x_value += 180  # Convert negative angles to positive
                     elif x_value <= 2.5:
-                        x_value = 177.5  # 将 0 到 2.5 的角度调整为 177.5
+                        x_value = 177.5  # Convert angles from 0 to 2.5 to 177.5
                 
-                    # 如果 x 值不在字典中，初始化为一个空字典
+                    # If x value not in dictionary, initialize it
                     if x_value not in data_dict:
                         data_dict[x_value] = {}
                     
-                    # 将 y 值存储在以文件名命名的列下
+                    # Store the y value under the column named after the file
                     data_dict[x_value][y_column_name] = y_value
                 
                 except ValueError:
-                    # 如果 x 或 y 不是数字，则跳过这一行
-                    print(f"跳过无法解析的行: {line.strip()}")
+                    # Skip the line if x or y cannot be parsed as a number
+                    print(f"Skipping unparseable line: {line.strip()}")
                     continue
 
-# 将数据转换为 DataFrame
+# Convert the dictionary into a DataFrame
 df_final = pd.DataFrame.from_dict(data_dict, orient='index').reset_index().rename(columns={'index': 'x'})
 
-# 将 NaN 替换为 0（即没有对应的 y 值时）
+# Replace NaN with 0 (no corresponding y value)
 df_final.fillna(0, inplace=True)
 
-# 归一化每一列：每列的所有数值除以该列数值之和
-for column in df_final.columns[1:]:  # 跳过第一列 'x'
+# Normalize each column: divide all values in each column by the column sum
+for column in df_final.columns[1:]:  # Skip the first column 'x'
     column_sum = df_final[column].sum()
-    if column_sum != 0:  # 避免除以 0
+    if column_sum != 0:  # Avoid division by zero
         df_final[column] = df_final[column] / column_sum
 
-# 定义循环的5度区间，从-2.5开始到180
-bins = np.arange(-2.5, 182.5, 5)  # 从-2.5到180.5，步长为5
-labels = np.arange(0, 180, 5)  # 标签从0开始，每5度一个，共36个标签
+# Define circular 5-degree bins from -2.5 to 180
+bins = np.arange(-2.5, 182.5, 5)  # From -2.5 to 180.5, step = 5
+labels = np.arange(0, 180, 5)     # Labels from 0, stepping by 5, total 36 labels
 
-# 使用 pd.cut 创建分组，按照定义的区间进行分段
+# Use pd.cut to create bins based on the defined intervals
 df_final['bin'] = pd.cut(df_final['x'], bins=bins, labels=labels, include_lowest=True)
 
-# 创建一个 DataFrame 存储加和后的结果
-df_binned = pd.DataFrame({'bin': labels})  # 保留标签数量
+# Create a DataFrame to store the summed results for each bin
+df_binned = pd.DataFrame({'bin': labels})  # Preserve the number of labels
 
-# 对每列的 y 值按分组进行加和
-for column in df_final.columns[1:-1]:  # 跳过 'x' 和 'bin' 列
+# Sum y-values within each bin for every column
+for column in df_final.columns[1:-1]:  # Skip 'x' and 'bin'
     binned_sums = df_final.groupby('bin')[column].sum().reindex(df_binned['bin']).reset_index(drop=True)
     
-    # 将分组加和的结果存储到新的 DataFrame 中
+    # Store results in the new DataFrame
     df_binned[column] = binned_sums
 
-# 保存到 Excel 文件
+# Save results to Excel
 df_binned.to_excel(output_excel, index=False)
 
-print(f"数据已成功保存到 {output_excel}")
+print(f"Data has been successfully saved to {output_excel}")
